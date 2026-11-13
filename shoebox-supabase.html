@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shoebox Appeal – What are you bringing?</title>
+<style>
+:root{--bg:#fbf7f2;--card:#fff;--ink:#2b2b33;--mut:#6b6b76;--acc:#e2574c;--acc2:#1f9d8f;--line:#e8e1d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c22;--card:#27272f;--ink:#f1eee9;--mut:#a2a2ad;--line:#3a3a45;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1c22;--card:#27272f;--ink:#f1eee9;--mut:#a2a2ad;--line:#3a3a45;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;align-items:start}.sides .card{margin-top:0}@media(max-width:640px){.sides{grid-template-columns:1fr}}.side.g{border-top:5px solid #d6478a}.side.b{border-top:5px solid #3b82c4}.side.g h2{color:#d6478a}.side.b h2{color:#3b82c4}.side h3{margin:16px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+header{text-align:center;padding:24px 0 8px}
+header .box{font-size:44px}
+h1{margin:4px 0;font-size:28px}
+header p{color:var(--mut);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:18px}
+h2{margin:0 0 12px;font-size:18px}
+label.f{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input[type=text],input[type=email],input[type=number],select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.grp{margin-top:14px}.grp b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--acc2);margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0}
+.chips span{display:inline-block;padding:8px 13px;border:1px solid var(--line);border-radius:999px;font-size:14px;background:var(--bg)}
+.chips input:checked+span{background:var(--acc);border-color:var(--acc);color:#fff}
+.chips input:focus-visible+span{outline:2px solid var(--acc2)}
+button{margin-top:18px;width:100%;padding:13px;border:0;border-radius:12px;background:var(--acc);color:#fff;font:600 16px inherit;font-family:inherit;cursor:pointer}
+button:disabled{opacity:.5}
+.msg{margin-top:10px;font-size:14px;min-height:20px}.err{color:var(--acc)}.ok{color:var(--acc2)}
+.tally{display:flex;flex-wrap:wrap;gap:6px}
+.tally span{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.tally b{color:var(--acc)}
+.pl{border-top:1px solid var(--line);padding:12px 0}.pl:first-child{border-top:0}
+.pl .h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pl .n{font-weight:700}.pl .c{font-size:13px;color:var(--mut)}
+.pl .it{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+.pl .it span{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:2px 8px}
+.empty{color:var(--mut);text-align:center;padding:16px}
+.del{all:unset;color:var(--mut);font-size:12px;cursor:pointer;text-decoration:underline;margin:0;width:auto}
+</style></head><body><div class="wrap">
+<header><div class="box">📦</div><h1>Class Shoebox Appeal</h1>
+<p>Tell us which box your items are for and what you're bringing – so we can see everything coming in and avoid doubling up!</p></header>
+
+<form class="card" id="f">
+<h2>Add your pledge</h2>
+<label class="f" for="name">Your name</label><input type="text" id="name" required maxlength="60" autocomplete="name">
+<label class="f" for="email">Email</label><input type="email" id="email" required maxlength="100" autocomplete="email">
+<label class="f" for="cat">Which box are your items for?</label>
+<select id="cat" required><option value="">Choose…</option></select>
+<div id="groups"></div>
+<label class="f" for="other">Other (please state)</label><input type="text" id="other" maxlength="100">
+<button id="go" type="submit">Add my pledge</button>
+<div class="msg" id="msg"></div>
+</form>
+
+<div class="sides">
+<div class="card side g"><h2>👧 Girls' boxes (age 16) <span id="countG" style="color:var(--mut);font-weight:400"></span></h2>
+<h3>Total so far</h3><div class="tally" id="tallyG"></div>
+<h3>Who's bringing what</h3><div id="listG"><div class="empty">Loading…</div></div></div>
+<div class="card side b"><h2>👦 Boys' boxes (age 16) <span id="countB" style="color:var(--mut);font-weight:400"></span></h2>
+<h3>Total so far</h3><div class="tally" id="tallyB"></div>
+<h3>Who's bringing what</h3><div id="listB"><div class="empty">Loading…</div></div></div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const AGES=["16"];
+const GROUPS={"Toiletries":["Soap/shampoo","Toothpaste/toothbrush","Face cloth/sponge","Deodorant","Comb/brush","Razors/shaving gel"],
+"Toys/treats":["Cars/vehicles","Dolls/teddies","Sweets"],
+"Stationery":["Pens/pencils","Notepad/colouring book","Eraser/sharpener/ruler"],
+"New clothes":["Gloves/hat/scarf","Underwear/socks","Baby-grows"],
+"Miscellaneous":["Make-up","Sewing kit","Candles","Household tools","Baby/clean wipes","Jewellery/hair accessories"]};
+const $=id=>document.getElementById(id);
+const mk=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+[["Girl","Girls' box"],["Boy","Boys' box"]].forEach(([p,lab])=>{const og=document.createElement("optgroup");og.label=lab;AGES.forEach(a=>{const o=mk("option",null,p+" aged "+a);o.value=p+" "+a;og.appendChild(o)});$("cat").appendChild(og)});
+for(const[g,items]of Object.entries(GROUPS)){
+  const d=mk("div","grp");d.appendChild(mk("b",null,g));const ch=mk("div","chips");
+  items.forEach(i=>{const l=document.createElement("label");const k=document.createElement("input");k.type="checkbox";k.value=i;k.name="item";
+    l.appendChild(k);l.appendChild(mk("span",null,i));ch.appendChild(l)});
+  d.appendChild(ch);$("groups").appendChild(d)}
+const SB_URL="https://jmvoolnnfairiboseimj.supabase.co";
+const SB_KEY="sb_publishable_m0XAXg7lf1d3VomS38yNAw_xJfm_kSG";
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+let rows=[];
+function render(){renderSide("G","Girl");renderSide("B","Boy")}
+function renderSide(S,pre){
+  const list=$("list"+S);list.textContent="";
+  const rs=rows.filter(r=>(r.cat||"").startsWith(pre));
+  $("count"+S).textContent=rs.length?"("+rs.length+")":"";
+  if(!rs.length)list.appendChild(mk("div","empty","Nothing yet \u2013 be the first! \ud83c\udf89"));
+  const tot={};
+  rs.forEach(r=>{
+    (r.items||[]).forEach(i=>tot[i]=(tot[i]||0)+1);
+    const p=mk("div","pl"),h=mk("div","h");
+    h.appendChild(mk("span","n",r.name));h.appendChild(mk("span","c",r.cat));
+    p.appendChild(h);
+    const it=mk("div","it");
+    (r.items||[]).concat(r.other?["\u270e "+r.other]:[]).forEach(i=>it.appendChild(mk("span",null,i)));
+    p.appendChild(it);list.appendChild(p)});
+  const t=$("tally"+S);t.textContent="";
+  const ks=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]);
+  if(!ks.length)t.appendChild(mk("span",null,"Nothing pledged yet"));
+  ks.forEach(k=>{const s=mk("span",null,k+" ");s.appendChild(mk("b",null,"\u00d7"+tot[k]));t.appendChild(s)});
+}
+async function load(){
+  const{data,error}=await sb.from("pledges_public").select("*").order("created_at",{ascending:false});
+  if(error){if(!rows.length)["listG","listB"].forEach(i=>{$(i).textContent="";$(i).appendChild(mk("div","empty","Couldn't load pledges."))});return}
+  rows=data;render();
+}
+$("f").addEventListener("submit",async e=>{
+  e.preventDefault();const m=$("msg");m.className="msg";
+  const items=[...document.querySelectorAll("input[name=item]:checked")].map(x=>x.value);
+  const other=$("other").value.trim();
+  if(!items.length&&!other){m.className="msg err";m.textContent="Please tick at least one item.";return}
+  $("go").disabled=true;
+  const{error}=await sb.from("pledges").insert({name:$("name").value.trim(),email:$("email").value.trim(),cat:$("cat").value,items,other:other||null});
+  if(error){m.className="msg err";m.textContent="Couldn't save \u2013 please try again."}
+  else{m.className="msg ok";m.textContent="Thank you! Your pledge has been added \ud83d\udc9b";$("f").reset();load()}
+  $("go").disabled=false;
+});
+load();setInterval(load,15000);
+</script></body></html>
